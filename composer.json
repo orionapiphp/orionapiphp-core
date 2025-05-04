@@ -1,0 +1,23 @@
+{
+    "name": "shyamdubey/fastphp-core",
+    "description": "A Core Concept Behind shyamdubey/fastphp Project",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Shyam Dubey"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Core\\": "src/core/"
+        }
+    },
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/shyamdubey/fast-php-core"
+        }
+    ]
+}
