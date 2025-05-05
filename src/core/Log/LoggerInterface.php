@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Log;
+namespace FastPhp\Core\Log;
 
 /**
  * LoggerInterface provides key functions for logging the messages in application.

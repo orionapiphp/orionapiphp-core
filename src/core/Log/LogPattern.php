@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Core\Log;
+namespace FastPhp\Core\Log;
 
 /**
  * This enum provides the logging pattern for the application.

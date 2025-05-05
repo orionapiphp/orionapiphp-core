@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Middleware;
+namespace FastPhp\Core\Middleware;
 
-use Core\Http\Request;
+use FastPhp\Core\Http\Request;
 
 /**
  * This interface helps to create custom Middlewares which can be used to perform any specific task before the execution of any real logic.

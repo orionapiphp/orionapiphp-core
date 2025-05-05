@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Http;
+namespace FastPhp\Core\Http;
 /**
  * Handles all requests in this framework. This class is useful for getting URL Params, Request Body and Request Headers
  * @author Shyam Dubey

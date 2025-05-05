@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Core\Security;
+namespace FastPhp\Core\Security;
 
-use App\Settings;
-use Core\Enums\HttpStatus;
-use Core\Http\Response;
+use FastPhp\App\Settings;
+use FastPhp\Core\Enums\HttpStatus;
+use FastPhp\Core\Http\Response;
 use ReflectionClass;
 
 /**

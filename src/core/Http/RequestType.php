@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Core\Http;
+namespace FastPhp\Core\Http;
 
 /**
  * This class ensures the type of any request which is coming to the server.

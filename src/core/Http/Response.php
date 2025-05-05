@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Http;
+namespace FastPhp\Core\Http;
 
-use Core\Enums\HttpStatus;
+use FastPhp\Core\Enums\HttpStatus;
 
 /**
  * This class is responsible for returning the response back to the user.

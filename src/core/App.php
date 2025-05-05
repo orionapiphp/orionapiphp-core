@@ -1,9 +1,9 @@
 <?php
 
-namespace Core;
+namespace FastPhp\Core;
 
-use Core\Exception\ExceptionHandler;
-use Core\Http\Router;
+use FastPhp\Core\Exception\ExceptionHandler;
+use FastPhp\Core\Http\Router;
 
 /**
  * This is the main Class of this framework. It acts as main entry point for all reqeusts.

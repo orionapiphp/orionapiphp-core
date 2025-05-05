@@ -1,6 +1,6 @@
 <?php 
 
-namespace Core\Exception;
+namespace FastPhp\Core\Exception;
 
 use Exception;
 

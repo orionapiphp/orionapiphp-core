@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Core\Log;
+namespace FastPhp\Core\Log;
 
-use App\Settings;
-use Core\Enums\HttpStatus;
-use Core\Http\Response;
+use FastPhp\App\Settings;
+use FastPhp\Core\Enums\HttpStatus;
+use FastPhp\Core\Http\Response;
 use Exception;
 
 /**

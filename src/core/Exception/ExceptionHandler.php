@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Core\Exception;
+namespace FastPhp\Core\Exception;
 
-use Core\Enums\HttpStatus;
-use Core\Http\Response;
-use Core\Log\LoggerFactory;
+use FastPhp\Core\Enums\HttpStatus;
+use FastPhp\Core\Http\Response;
+use FastPhp\Core\Log\LoggerFactory;
 use Throwable;
 
 /**

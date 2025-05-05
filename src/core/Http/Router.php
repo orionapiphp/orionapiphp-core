@@ -1,13 +1,13 @@
 <?php
 
-namespace Core\Http;
+namespace FastPhp\Core\Http;
 
 use BadMethodCallException;
-use Core\Enums\HttpStatus;
-use Core\Exception\ClassNotFoundException;
-use Core\Exception\InvalidCallbackException;
-use Core\Exception\NotAnInstanceException;
-use Core\Middleware\MiddlewareInterface;
+use FastPhp\Core\Enums\HttpStatus;
+use FastPhp\Core\Exception\ClassNotFoundException;
+use FastPhp\Core\Exception\InvalidCallbackException;
+use FastPhp\Core\Exception\NotAnInstanceException;
+use FastPhp\Core\Middleware\MiddlewareInterface;
 
 /**
  * This class contains functions for handling requests in application.

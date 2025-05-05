@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Enums;
+namespace FastPhp\Core\Enums;
 
 /**
  * This enum provides list of mostly used HttpStatus for Response.
