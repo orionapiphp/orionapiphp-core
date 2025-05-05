@@ -3,7 +3,7 @@
 
 namespace FastPhp\Core\Log;
 
-use FastPhp\App\Settings;
+use App\Settings;
 use FastPhp\Core\Enums\HttpStatus;
 use FastPhp\Core\Http\Response;
 use Exception;
