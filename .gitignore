@@ -1,4 +1,1 @@
-images/
-src/logs/*.log
-!logs/.gitkeep
 /vendor/
