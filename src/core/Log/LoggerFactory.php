@@ -3,10 +3,11 @@
 
 namespace OrionApi\Core\Log;
 
-use App\Settings;
+use OrionApi\App\Settings;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Http\Response;
 use Exception;
+use OrionApi\Core\Exception\ClassNotFoundException;
 
 /**
  * This class is factory class for providing log features. It generates the log in logs directory in the given format.
