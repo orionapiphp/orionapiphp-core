@@ -1,7 +1,7 @@
 <?php
 
 
-namespace FastPhp\Core\Http;
+namespace OrionApi\Core\Http;
 
 /**
  * This class ensures the type of any request which is coming to the server.

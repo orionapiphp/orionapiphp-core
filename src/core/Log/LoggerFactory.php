@@ -1,11 +1,11 @@
 <?php
 
 
-namespace FastPhp\Core\Log;
+namespace OrionApi\Core\Log;
 
 use App\Settings;
-use FastPhp\Core\Enums\HttpStatus;
-use FastPhp\Core\Http\Response;
+use OrionApi\Core\Enums\HttpStatus;
+use OrionApi\Core\Http\Response;
 use Exception;
 
 /**
@@ -93,6 +93,9 @@ class LoggerFactory implements LoggerInterface
     private function logMessage($fullMessage)
     {
         //check whether user want to log the message in custom directory
+        if(!class_exists(Settings::class)){
+            throw new ClassNotFoundException(Settings::class. " class not found.");
+        }
         if (Settings::LOG_IN_CUSTOM_DIR) {
             $dir = Settings::LOG_DIR;
             try {

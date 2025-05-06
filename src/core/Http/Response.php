@@ -1,8 +1,8 @@
 <?php
 
-namespace FastPhp\Core\Http;
+namespace OrionApi\Core\Http;
 
-use FastPhp\Core\Enums\HttpStatus;
+use OrionApi\Core\Enums\HttpStatus;
 
 /**
  * This class is responsible for returning the response back to the user.

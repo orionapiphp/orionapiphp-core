@@ -1,9 +1,9 @@
 <?php
 
-namespace FastPhp\Core;
+namespace OrionApi\Core;
 
-use FastPhp\Core\Exception\ExceptionHandler;
-use FastPhp\Core\Http\Router;
+use OrionApi\Core\Exception\ExceptionHandler;
+use OrionApi\Core\Http\Router;
 
 /**
  * This is the main Class of this framework. It acts as main entry point for all reqeusts.

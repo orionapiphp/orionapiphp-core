@@ -1,6 +1,6 @@
 <?php
 
-namespace FastPhp\Core\Log;
+namespace OrionApi\Core\Log;
 
 /**
  * LoggerInterface provides key functions for logging the messages in application.

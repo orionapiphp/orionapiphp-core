@@ -1,7 +1,7 @@
 <?php
 
 
-namespace FastPhp\Core\Exception;
+namespace OrionApi\Core\Exception;
 
 use Exception;
 

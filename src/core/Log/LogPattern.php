@@ -1,7 +1,7 @@
 <?php
 
 
-namespace FastPhp\Core\Log;
+namespace OrionApi\Core\Log;
 
 /**
  * This enum provides the logging pattern for the application.

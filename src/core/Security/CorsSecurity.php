@@ -1,11 +1,11 @@
 <?php
 
 
-namespace FastPhp\Core\Security;
+namespace OrionApi\Core\Security;
 
 use App\Settings;
-use FastPhp\Core\Enums\HttpStatus;
-use FastPhp\Core\Http\Response;
+use OrionApi\Core\Enums\HttpStatus;
+use OrionApi\Core\Http\Response;
 use ReflectionClass;
 
 /**

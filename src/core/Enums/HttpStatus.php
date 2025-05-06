@@ -1,6 +1,6 @@
 <?php
 
-namespace FastPhp\Core\Enums;
+namespace OrionApi\Core\Enums;
 
 /**
  * This enum provides list of mostly used HttpStatus for Response.

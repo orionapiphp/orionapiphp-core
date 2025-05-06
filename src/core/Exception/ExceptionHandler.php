@@ -1,11 +1,11 @@
 <?php
 
 
-namespace FastPhp\Core\Exception;
+namespace OrionApi\Core\Exception;
 
-use FastPhp\Core\Enums\HttpStatus;
-use FastPhp\Core\Http\Response;
-use FastPhp\Core\Log\LoggerFactory;
+use OrionApi\Core\Enums\HttpStatus;
+use OrionApi\Core\Http\Response;
+use OrionApi\Core\Log\LoggerFactory;
 use Throwable;
 
 /**

@@ -1,23 +1,24 @@
 {
-    "name": "shyamdubey/fastphp-core",
-    "description": "A Core Concept Behind shyamdubey/fastphp Project",
+    "name": "orionapi/core",
+    "description": "A Core Concept Behind orionapi framework Project",
     "type": "library",
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "Shyam Dubey"
+            "name": "Shyam Dubey",
+            "email":"shyam0853@gmail.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "FastPhp\\Core\\": "src/core/"
+            "OrionApi\\Core\\": "src/core/"
         }
     },
     "minimum-stability": "stable",
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/shyamdubey/fast-php-core"
+            "url": "https://github.com/orionapiphp/orionapi-core.git"
         }
     ]
 }

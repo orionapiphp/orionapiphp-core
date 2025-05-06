@@ -1,13 +1,13 @@
 <?php
 
-namespace FastPhp\Core\Http;
+namespace OrionApi\Core\Http;
 
 use BadMethodCallException;
-use FastPhp\Core\Enums\HttpStatus;
-use FastPhp\Core\Exception\ClassNotFoundException;
-use FastPhp\Core\Exception\InvalidCallbackException;
-use FastPhp\Core\Exception\NotAnInstanceException;
-use FastPhp\Core\Middleware\MiddlewareInterface;
+use OrionApi\Core\Enums\HttpStatus;
+use OrionApi\Core\Exception\ClassNotFoundException;
+use OrionApi\Core\Exception\InvalidCallbackException;
+use OrionApi\Core\Exception\NotAnInstanceException;
+use OrionApi\Core\Middleware\MiddlewareInterface;
 
 /**
  * This class contains functions for handling requests in application.
@@ -144,7 +144,6 @@ class Router
             throw new BadMethodCallException("Method not allowed.");
         }
 
-        $params["request_body"] = Request::get_body();
 
         $request = new Request();
         if (count($middlewares) > 0) {
@@ -159,6 +158,8 @@ class Router
             $request = $m->handle($request);
             Request::update($request);
         }
+
+        $params["request_body"] = Request::get_body();
 
         if (!stripos($callback, "@")) {
             throw new InvalidCallbackException("Invalid Callback Function Provided. Please ensure your call back function consists @ symbol to separate the controller and fucntion.");
