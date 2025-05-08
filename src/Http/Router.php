@@ -18,7 +18,9 @@ class Router
 {
 
     private static $middlewaresQueue = [];
+    private static $global_middlewares = [];
     private static $routes = [];
+    private static $exempted_routes = [];
 
 
     /**
@@ -150,14 +152,33 @@ class Router
             self::$middlewaresQueue = array_merge($middlewares);
         }
 
-        foreach (self::$middlewaresQueue as $middleware) {
-            $m = new $middleware;
-            if (!$m instanceof MiddlewareInterface) {
-                throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
-            }
-            $request = $m->handle($request);
-            Request::update($request);
+        if(count(self::$exempted_routes) == 0 && count(self::$global_middlewares) > 0){
+            self::$middlewaresQueue = array_merge(self::$middlewaresQueue, self::$global_middlewares);
         }
+        else if (count(self::$exempted_routes) > 0){
+            if(!in_array($url, self::$exempted_routes)){
+            self::$middlewaresQueue = array_merge(self::$middlewaresQueue, self::$global_middlewares); 
+            }
+            foreach (self::$middlewaresQueue as $middleware) {
+                $m = new $middleware;
+                if (!$m instanceof MiddlewareInterface) {
+                    throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
+                }
+                $request = $m->handle_request($request);
+                Request::update($request);
+            }
+        }
+        else{
+            foreach (self::$middlewaresQueue as $middleware) {
+                $m = new $middleware;
+                if (!$m instanceof MiddlewareInterface) {
+                    throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
+                }
+                $request = $m->handle_request($request);
+                Request::update($request);
+            }
+        }
+        
 
         $params["request_body"] = Request::get_body();
 
@@ -171,7 +192,15 @@ class Router
 
         if (class_exists($controller) && method_exists($controller, $controller_method)) {
             $instance = new $controller;
-            $instance->$controller_method($params);
+            $response = $instance->$controller_method($params);
+            foreach (self::$middlewaresQueue as $middleware) {
+                $m = new $middleware;
+                if (!$m instanceof MiddlewareInterface) {
+                    throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
+                }
+                $response = $m->handle_response($response);
+            }
+            echo $response;
         } else {
             throw new ClassNotFoundException($controller . " Class Not Found.");
         }
@@ -203,10 +232,26 @@ class Router
                 // }
             }
             if (!$route_found) {
-                Response::json(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
+               echo Response::json(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
             }
         } else {
-            Response::json(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
+           echo Response::json(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
         }
+    }
+
+
+    /** 
+     * This function takes array of middlewares which applied on each request. It sets these global middlewares on every route.
+     * Use this to 
+     */
+    public static function set_global_middlewares($middlewares, $except = []){
+        if (gettype($middlewares) == 'array'){
+            self::$global_middlewares = array_merge(self::$global_middlewares, $middlewares);
+        }
+        else{
+            array_push(self::$global_middlewares, $middlewares);
+        }
+
+        self::$exempted_routes = $except;
     }
 }

@@ -12,6 +12,10 @@ use OrionApi\Core\Enums\HttpStatus;
 class Response
 {
 
+    private static $data;
+    private static HttpStatus $statusCode;
+
+
     /**
      * Returns the output in form of JSON. 
      * Content-type:application/json
@@ -20,9 +24,22 @@ class Response
      */
     public static function json(HttpStatus $statusCode, $data)
     {
+        self::$statusCode = $statusCode;
+        self::$data = $data;
         header("Content-type:application/json");
         http_response_code($statusCode->value);
-        echo json_encode($data);
-        die();
+        return json_encode($data);
     }
+
+
+    public static function get_data()
+    {
+        return self::$data;
+    }
+
+    public static function get_status_code()
+    {
+        return self::$statusCode;
+    }
+
 }

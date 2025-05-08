@@ -3,7 +3,7 @@
 
 namespace OrionApi\Core\Log;
 
-use OrionApi\App\Settings;
+use OrionApi\Core\Settings;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Http\Response;
 use Exception;
@@ -117,7 +117,7 @@ class LoggerFactory implements LoggerInterface
                         fwrite($f, $fullMessage . "\n");
                     }
                 } else {
-                    throw new Exception(__DIR__ . "/" . $dir . " directory doesn't exists. Please create the directory to log the message");
+                    mkdir($dir, 744);
                 }
             } catch (Exception $ex) {
                 $message = $ex->getMessage();
@@ -126,7 +126,7 @@ class LoggerFactory implements LoggerInterface
                 $response["stacktrace"] = $stacktrace;
                 $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
                 $response["time"] = time();
-                Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
+                echo Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
             }
         } else {
             error_log($fullMessage);

@@ -14,6 +14,8 @@ use OrionApi\Core\Http\Router;
 class App
 {
 
+    private static $global_exception_handler_class;
+
     /**
      * This function starts the application by ensuring that Routes are initialized and global exception handling is started.
      * @author Shyam Dubey
@@ -22,7 +24,11 @@ class App
     public static function start()
     {
         //keep this function on the first line so that it can handle all exceptions globally.
-        ExceptionHandler::init();
+        ExceptionHandler::init(self::$global_exception_handler_class);
         Router::init();
+    }
+
+    public static function set_global_exception_handler_class($class){
+        self::$global_exception_handler_class = $class;
     }
 }

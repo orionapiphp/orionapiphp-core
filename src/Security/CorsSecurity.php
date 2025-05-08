@@ -3,7 +3,7 @@
 
 namespace OrionApi\Core\Security;
 
-use App\Settings;
+use OrionApi\Core\Settings;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Http\Response;
 use ReflectionClass;

@@ -24,10 +24,13 @@ class ExceptionHandler
      * @author Shyam Dubey
      * @since 2025
      */
-    public static function init()
+    public static function init($class)
     {
-        self::$logger = LoggerFactory::get_logger(self::class);
-        set_exception_handler([self::class, 'handle']);
+        if(!class_exists($class)){
+            $class = self::class;
+        }
+        self::$logger = LoggerFactory::get_logger($class);
+        set_exception_handler([$class, 'handle']);
     }
 
 

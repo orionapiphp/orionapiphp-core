@@ -3,6 +3,7 @@
 namespace OrionApi\Core\Middleware;
 
 use OrionApi\Core\Http\Request;
+use OrionApi\Core\Http\Response;
 
 /**
  * This interface helps to create custom Middlewares which can be used to perform any specific task before the execution of any real logic.
@@ -17,5 +18,9 @@ interface MiddlewareInterface
      * @author Shyam Dubey
      * @since 2025
      */
-    function handle(Request $request): Request;
+    function handle_request(Request $request): Request;
+
+
+    function handle_response(Response $response): Response;
+
 }
