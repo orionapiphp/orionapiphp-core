@@ -3,10 +3,8 @@
 
 namespace OrionApi\Core\Security;
 
-use OrionApi\Core\Settings;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Http\Response;
-use ReflectionClass;
 
 /**
  * This class provides CORS configuration
@@ -15,6 +13,15 @@ use ReflectionClass;
  */
 class CorsSecurity
 {
+
+    private static $allowed_domains = [];
+
+
+
+    public static function set_allowed_domain($allowed_domain)
+    {
+        self::$allowed_domains = array($allowed_domain);
+    }
 
 
     /**
@@ -25,36 +32,26 @@ class CorsSecurity
      */
     public static function init()
     {
-        $reflection = new ReflectionClass(Settings::class);
-        $constants = $reflection->getConstants();
-        if (in_array(Settings::CORS_DOMAINS, $constants)) {
-            $cors_domains = Settings::CORS_DOMAINS;
 
-            // Allow from any origin
-            header("Access-Control-Allow-Origin: *");
 
-            // Allow specific methods
-            header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+        // Allow from any origin
+        header("Access-Control-Allow-Origin: *");
 
-            // Allow specific headers
-            header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+        // Allow specific methods
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
-            // Handle preflight requests
-            if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-                http_response_code(HttpStatus::OK->value);
-                exit;
-            }
-            $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "";
+        // Allow specific headers
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-            if ($cors_domains != "*") {
-                if (gettype($cors_domains) == "array") {
-                    if (!in_array($host, $cors_domains)) {
-                        Response::json(HttpStatus::FORBIDDEN, ["message" => "Invalid Domain. Add this domain in Settings under variable CORS_DOMAINS"]);
-                    }
-                } else if ($cors_domains != $host) {
-                    Response::json(HttpStatus::FORBIDDEN, ["message" => "Invalid Domain. Add this domain in Settings under variable CORS_DOMAINS"]);
-                }
-            }
+        // Handle preflight requests
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+            http_response_code(HttpStatus::OK->value);
+            exit;
+        }
+        $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "";
+        if (!in_array("*", self::$allowed_domains) && !in_array($host, self::$allowed_domains)) {
+            echo Response::json(HttpStatus::FORBIDDEN, ["message" => "Invalid Domain. Add this domain in Settings under variable CORS_DOMAINS"]);
+            die();
         }
     }
 }

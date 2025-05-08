@@ -52,6 +52,6 @@ class ExceptionHandler
         $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
         $response["time"] = time();
         self::$logger->error(json_encode($response));
-        Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
+        return Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
     }
 }

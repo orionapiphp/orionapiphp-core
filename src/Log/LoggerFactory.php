@@ -19,11 +19,11 @@ class LoggerFactory implements LoggerInterface
 {
 
     private static $className;
-    private $log_dir;
+    private static $log_dir;
 
 
     public function set_log_dir($dir){
-        $this->log_dir = $dir;
+        self::$log_dir = $dir;
     }
 
 
@@ -99,41 +99,42 @@ class LoggerFactory implements LoggerInterface
     private function logMessage($fullMessage)
     {
         //check whether user want to log the message in custom directory
-        if (!class_exists(Settings::class)) {
-            throw new ClassNotFoundException(Settings::class . " class not found.");
-        }
-        $dir = $this->log_dir;
+        
+        $dir = self::$log_dir;
         if($dir == null){
-            throw new InvalidArgumentException("Could not found log directory. Set the log directory by LoggerFactory->set_log_dir() function.");
+            error_log($fullMessage);
         }
-        try {
-            if (is_dir($dir)) {
-                $logPattern = Settings::LOG_FILE_PATTERN;
-                $logPatternCases = LogPattern::cases();
-                if (!in_array($logPattern, $logPatternCases)) {
-                    throw new Exception("Log pattern could not be found. It should be one of the following " . implode(", ", $logPatternCases));
-                }
-                if ($logPattern == LogPattern::DDMMYYYY_LOGS) {
-                    $today = date("Y-m-d", time());
-                    $file_name = $dir . "/" . $today . "_logs.log";
-                    if (!file_exists($file_name)) {
-                        $f = fopen($file_name, "w");
-                    } else {
-                        $f = fopen($file_name, "a");
+        else{
+            try {
+                if (is_dir($dir)) {
+                    $logPattern = LogPattern::DDMMYYYY_LOGS;
+                    $logPatternCases = LogPattern::cases();
+                    if (!in_array($logPattern, $logPatternCases)) {
+                        throw new Exception("Log pattern could not be found. It should be one of the following " . implode(", ", $logPatternCases));
                     }
-                    fwrite($f, $fullMessage . "\n");
+                    if ($logPattern == LogPattern::DDMMYYYY_LOGS) {
+                        $today = date("Y-m-d", time());
+                        $file_name = $dir . "/" . $today . "_logs.log";
+                        if (!file_exists($file_name)) {
+                            $f = fopen($file_name, "w");
+                        } else {
+                            $f = fopen($file_name, "a");
+                        }
+                        fwrite($f, $fullMessage . "\n");
+                    }
+                } else {
+                    mkdir($dir, 744);
                 }
-            } else {
-                mkdir($dir, 744);
+            } catch (Exception $ex) {
+                $message = $ex->getMessage();
+                $stacktrace = $ex->getTraceAsString();
+                $response["message"] = $message;
+                $response["stacktrace"] = $stacktrace;
+                $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
+                $response["time"] = time();
+                echo Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
             }
-        } catch (Exception $ex) {
-            $message = $ex->getMessage();
-            $stacktrace = $ex->getTraceAsString();
-            $response["message"] = $message;
-            $response["stacktrace"] = $stacktrace;
-            $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
-            $response["time"] = time();
-            echo Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
         }
+        
     }
 }
