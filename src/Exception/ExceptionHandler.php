@@ -3,6 +3,7 @@
 
 namespace OrionApi\Core\Exception;
 
+use InvalidArgumentException;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Http\Response;
 use OrionApi\Core\Log\LoggerFactory;
@@ -26,6 +27,9 @@ class ExceptionHandler
      */
     public static function init($class)
     {
+        if($class == null){
+            throw new InvalidArgumentException("Class name can not be null.");
+        }
         if(!class_exists($class)){
             $class = self::class;
         }
