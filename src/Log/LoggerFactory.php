@@ -7,6 +7,7 @@ use OrionApi\Core\Settings;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Http\Response;
 use Exception;
+use InvalidArgumentException;
 use OrionApi\Core\Exception\ClassNotFoundException;
 
 /**
@@ -18,8 +19,12 @@ class LoggerFactory implements LoggerInterface
 {
 
     private static $className;
-    private static LoggerFactory $instance;
+    private $log_dir;
 
+
+    public function set_log_dir($dir){
+        $this->log_dir = $dir;
+    }
 
 
     /**
@@ -94,42 +99,41 @@ class LoggerFactory implements LoggerInterface
     private function logMessage($fullMessage)
     {
         //check whether user want to log the message in custom directory
-        if(!class_exists(Settings::class)){
-            throw new ClassNotFoundException(Settings::class. " class not found.");
+        if (!class_exists(Settings::class)) {
+            throw new ClassNotFoundException(Settings::class . " class not found.");
         }
-        if (Settings::LOG_IN_CUSTOM_DIR) {
-            $dir = Settings::LOG_DIR;
-            try {
-                if (is_dir($dir)) {
-                    $logPattern = Settings::LOG_FILE_PATTERN;
-                    $logPatternCases = LogPattern::cases();
-                    if (!in_array($logPattern, $logPatternCases)) {
-                        throw new Exception("Log pattern could not be found. It should be one of the following " . implode(", ", $logPatternCases));
-                    }
-                    if ($logPattern == LogPattern::DDMMYYYY_LOGS) {
-                        $today = date("Y-m-d", time());
-                        $file_name = $dir . "/" . $today . "_logs.log";
-                        if (!file_exists($file_name)) {
-                            $f = fopen($file_name, "w");
-                        } else {
-                            $f = fopen($file_name, "a");
-                        }
-                        fwrite($f, $fullMessage . "\n");
-                    }
-                } else {
-                    mkdir($dir, 744);
+        $dir = $this->log_dir;
+        if($dir == null){
+            throw new InvalidArgumentException("Could not found log directory. Set the log directory by LoggerFactory->set_log_dir() function.");
+        }
+        try {
+            if (is_dir($dir)) {
+                $logPattern = Settings::LOG_FILE_PATTERN;
+                $logPatternCases = LogPattern::cases();
+                if (!in_array($logPattern, $logPatternCases)) {
+                    throw new Exception("Log pattern could not be found. It should be one of the following " . implode(", ", $logPatternCases));
                 }
-            } catch (Exception $ex) {
-                $message = $ex->getMessage();
-                $stacktrace = $ex->getTraceAsString();
-                $response["message"] = $message;
-                $response["stacktrace"] = $stacktrace;
-                $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
-                $response["time"] = time();
-                echo Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
+                if ($logPattern == LogPattern::DDMMYYYY_LOGS) {
+                    $today = date("Y-m-d", time());
+                    $file_name = $dir . "/" . $today . "_logs.log";
+                    if (!file_exists($file_name)) {
+                        $f = fopen($file_name, "w");
+                    } else {
+                        $f = fopen($file_name, "a");
+                    }
+                    fwrite($f, $fullMessage . "\n");
+                }
+            } else {
+                mkdir($dir, 744);
             }
-        } else {
-            error_log($fullMessage);
+        } catch (Exception $ex) {
+            $message = $ex->getMessage();
+            $stacktrace = $ex->getTraceAsString();
+            $response["message"] = $message;
+            $response["stacktrace"] = $stacktrace;
+            $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
+            $response["time"] = time();
+            echo Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
         }
     }
 }
