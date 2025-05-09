@@ -5,14 +5,17 @@ namespace OrionApi\Core\Http;
 use BadMethodCallException;
 use OrionApi\Core\Enums\HttpStatus;
 use OrionApi\Core\Exception\ClassNotFoundException;
-use OrionApi\Core\Exception\InvalidCallbackException;
+use OrionApi\Core\Exception\InvalidResponseTypeException;
+use OrionApi\Core\Exception\MethodNotFoundException;
 use OrionApi\Core\Exception\NotAnInstanceException;
+use OrionApi\Core\Exception\ResourceNotFoundException;
 use OrionApi\Core\Middleware\MiddlewareInterface;
 
 /**
  * This class contains functions for handling requests in application.
  * @author Shyam Dubey
- * @since 2025
+ * @since v1.0.0
+ * @version v1.0.0
  */
 class Router
 {
@@ -28,10 +31,12 @@ class Router
      * it takes two required parameters (url and callback, middlewares = []) 
      * url at which you want to perform any callback 
      * Syntax for callback function is Service@function_name 
-     * @example Router::get("/user", "UserService@get_all_users);
+     * @example Router::get("/user", "UserService@get_all_users); 
+     * This Router will now call the function get_all_users() of UserService.
      * middlewares are optional you can put middlewares in the method the request will pass through the middleware
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
     public static function get($url, $callback, $middlewares = [])
     {
@@ -52,9 +57,11 @@ class Router
      * url at which you want to perform any callback 
      * Syntax for callback function is Service@function_name 
      * @example Router::post("/user", "UserService@save_user);
+     * This Router will now call the function get_all_users() of UserService.
      * middlewares are optional you can put middlewares in the method the request will pass through the middleware
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
     public static function post($url, $callback, $middlewares = [])
     {
@@ -75,9 +82,26 @@ class Router
      * url at which you want to perform any callback 
      * Syntax for callback function is Service@function_name 
      * @example Router::delete("/user/{user_id}", "UserService@delete_by_id);
+     * Now how you will get the {user_id} value in function delete_by_id($params) 
+     * 
+     * 
+     * Declare a variable in function like 
+     * 
+     * --------------------------------------------------------
+     * 
+     * 
+     * class UserService {
+     * 
+     *    public function delele_by_id($params){
+     *          $user_id = $params['user_id']  ////// the user_id should be same as you have written in your Router::delete
+     *      }
+     * }
+     * 
+     * After gettig the $user_id you can perform action to delete the user. 
      * middlewares are optional you can put middlewares in the method the request will pass through the middleware
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
     public static function delete($url, $callback, $middlewares = [])
     {
@@ -98,9 +122,14 @@ class Router
      * url at which you want to perform any callback 
      * Syntax for callback function is Service@function_name 
      * @example Router::put("/user", "UserService@update_user);
+     * 
+     * 
+     * You can get the Request_body by using the Request::get_body() function anywhere in the classes.
+     * 
      * middlewares are optional you can put middlewares in the method the request will pass through the middleware
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
     public static function put($url, $callback, $middlewares = [])
     {
@@ -123,7 +152,8 @@ class Router
      * @example Router::merge("/user", "UserService@any_function);
      * middlewares are optional you can put middlewares in the method the request will pass through the middleware
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
     public static function merge($url, $callback, $middlewares = [])
     {
@@ -142,57 +172,60 @@ class Router
     private static function handle($url, $callback, $requestMethod, $params = [], $middlewares = [])
     {
 
+
         if ($_SERVER['REQUEST_METHOD'] != $requestMethod) {
             throw new BadMethodCallException("Method not allowed.");
         }
 
 
-        $request = new Request();
-        if (count($middlewares) > 0) {
+        $request = new Request($url);
+        if (gettype($middlewares) == 'object') {
+            array_push(self::$middlewaresQueue, $middlewares);
+        } else if (count($middlewares) > 0) {
             self::$middlewaresQueue = array_merge($middlewares);
         }
 
-        if(count(self::$exempted_routes) == 0 && count(self::$global_middlewares) > 0){
+        if (count(self::$exempted_routes) == 0 && count(self::$global_middlewares) > 0) {
             self::$middlewaresQueue = array_merge(self::$middlewaresQueue, self::$global_middlewares);
-        }
-        else if (count(self::$exempted_routes) > 0){
-            if(!in_array($url, self::$exempted_routes)){
-            self::$middlewaresQueue = array_merge(self::$middlewaresQueue, self::$global_middlewares); 
-            }
-            foreach (self::$middlewaresQueue as $middleware) {
-                $m = new $middleware;
-                if (!$m instanceof MiddlewareInterface) {
-                    throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
-                }
-                $request = $m->handle_request($request);
-                Request::update($request);
+        } else if (count(self::$exempted_routes) > 0) {
+            if (!in_array($url, self::$exempted_routes)) {
+                self::$middlewaresQueue = array_merge(self::$middlewaresQueue, self::$global_middlewares);
             }
         }
-        else{
-            foreach (self::$middlewaresQueue as $middleware) {
-                $m = new $middleware;
-                if (!$m instanceof MiddlewareInterface) {
-                    throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
-                }
-                $request = $m->handle_request($request);
-                Request::update($request);
-            }
-        }
-        
 
+        foreach (self::$middlewaresQueue as $middleware) {
+            $m = new $middleware;
+            if (!$m instanceof MiddlewareInterface) {
+                throw new NotAnInstanceException($m::class . " is not instance of " . MiddlewareInterface::class);
+            }
+            $request = $m->handle_request($request);
+            Request::update($request);
+        }
         $params["request_body"] = Request::get_body();
 
-        if (!stripos($callback, "@")) {
-            throw new InvalidCallbackException("Invalid Callback Function Provided. Please ensure your call back function consists @ symbol to separate the controller and fucntion.");
+        if(gettype($callback) == 'array' || gettype($callback) == 'object' ){
+            Response::out(HttpStatus::OK, $callback);
+            
+        }
+        else if (!stripos($callback, "@")) {
+            // throw new InvalidCallbackException("Invalid Callback Function Provided. Please ensure your call back function consists @ symbol to separate the controller and function.");
+            Response::out(HttpStatus::OK, $callback);
+            
         }
         $arr = explode("@", $callback);
         $controller = $arr[0];
         $controller_method = $arr[1];
 
 
-        if (class_exists($controller) && method_exists($controller, $controller_method)) {
+        if (class_exists($controller)) {
+            if(!method_exists($controller, $controller_method)){
+                throw new MethodNotFoundException($controller_method." method not found in class ".$controller);
+            }
             $instance = new $controller;
             $response = $instance->$controller_method($params);
+            if (!$response instanceof Response) {
+                $response = Response::json(HttpStatus::OK, $response);
+            }
             foreach (self::$middlewaresQueue as $middleware) {
                 $m = new $middleware;
                 if (!$m instanceof MiddlewareInterface) {
@@ -200,7 +233,18 @@ class Router
                 }
                 $response = $m->handle_response($response);
             }
-            echo $response;
+            if ($response instanceof Response) {
+                if ($response->get_return_type() == Response::RETURN_TYPE_JSON) {
+                    header("content-type:application/json");
+                    http_response_code($response->get_status_code());
+                    echo json_encode($response->get_data());
+                    die();
+                } else {
+                    throw new InvalidResponseTypeException("Invalid Response Type. It should be Response::json()");
+                }
+            } else {
+                throw new InvalidResponseTypeException("Invalid Response Type. It should be Response::json()");
+            }
         } else {
             throw new ClassNotFoundException($controller . " Class Not Found.");
         }
@@ -209,9 +253,10 @@ class Router
 
     /**
      * This method searches for all the routes which you have added in index.php file. 
-     * This function should be placed at the end of index.php so that it searches for the routes after the routes are registered.
+     * 
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
     public static function init()
     {
@@ -232,23 +277,34 @@ class Router
                 // }
             }
             if (!$route_found) {
-               echo Response::json(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
+                throw new ResourceNotFoundException("Not Found");
+                //    echo Response::out(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
             }
         } else {
-           echo Response::json(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
+            throw new ResourceNotFoundException("Not Found");
+            //    echo Response::out(HttpStatus::NOT_FOUND, ["message" => "Not Found"]);
         }
     }
 
 
     /** 
      * This function takes array of middlewares which applied on each request. It sets these global middlewares on every route.
-     * Use this to 
+     * Use this to set the middlewares on each route.
+     * 
+     * 
+     * If you want to exempt some routes from these global middlewares, you can provide those routes as a second parameter in the form of array. 
+     * 
+     * The name should be exact match of what you have written in Route::get()post() ... etc functions.
+     * 
+     * @author Shyam Dubey
+     * @since v1.0.0
+     * @version v1.0.0
      */
-    public static function set_global_middlewares($middlewares, $except = []){
-        if (gettype($middlewares) == 'array'){
+    public static function set_global_middlewares($middlewares, $except = [])
+    {
+        if (gettype($middlewares) == 'array') {
             self::$global_middlewares = array_merge(self::$global_middlewares, $middlewares);
-        }
-        else{
+        } else {
             array_push(self::$global_middlewares, $middlewares);
         }
 

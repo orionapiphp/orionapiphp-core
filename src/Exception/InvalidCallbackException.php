@@ -4,6 +4,13 @@ namespace OrionApi\Core\Exception;
 
 use Exception;
 
+/**
+ * InvalidCallbackException is generated if the callback function which you have mentioned in Router::get() function is not found.
+ * 
+ * @author Shyam Dubey
+ * @since v1.0.0
+ * @version 1.0.0
+ */
 class InvalidCallbackException extends Exception{
 
 

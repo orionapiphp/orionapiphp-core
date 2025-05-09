@@ -3,32 +3,50 @@
 namespace OrionApi\Core;
 
 use OrionApi\Core\Exception\ExceptionHandler;
+use OrionApi\Core\Exception\ExceptionHandlerInterface;
 use OrionApi\Core\Http\Router;
 
 /**
  * This is the main Class of this framework. It acts as main entry point for all reqeusts.
  * @author Shyam Dubey
- * @since 2025
+ * @since v1.0.0
+ * @version v1.0.0
  *
  */
 class App
 {
 
-    private static $global_exception_handler_class;
+    private  $global_exception_handler_class;
 
     /**
      * This function starts the application by ensuring that Routes are initialized and global exception handling is started.
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
-    public static function start()
+    public function start()
     {
         //keep this function on the first line so that it can handle all exceptions globally.
-        ExceptionHandler::init(self::$global_exception_handler_class);
+        if($this->global_exception_handler_class == null){
+            $this->global_exception_handler_class = ExceptionHandler::class;
+        }
+        ExceptionHandler::init($this->global_exception_handler_class);
         Router::init();
+
     }
 
-    public static function set_global_exception_handler_class($class){
-        self::$global_exception_handler_class = $class;
+    /**
+     * This function sets the global exception handler class. By default we have added class @link OrionApi\Exception\ExceptionHandler 
+     * which handles all the exceptions globally and generates the logs and output. 
+     * Keep this function on the top of the index.php file. so that it can handle and generate logs without any unwanted output.
+     * 
+     * 
+     * @author Shyam Dubey
+     * @since v1.0.0
+     * @version v1.0.0
+     */
+    public function start_global_exception($exception_class)
+    {
+        $this->global_exception_handler_class = $exception_class;
     }
 }

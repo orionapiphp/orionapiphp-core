@@ -5,7 +5,8 @@ namespace OrionApi\Core\Log;
 /**
  * LoggerInterface provides key functions for logging the messages in application.
  * @author Shyam Dubey
- * @since 2025
+ * @since v1.0.0
+ * @version v1.0.0
  */
 interface LoggerInterface
 {

@@ -106,6 +106,9 @@ class LoggerFactory implements LoggerInterface
         }
         else{
             try {
+                if(!is_dir($dir)){
+                    mkdir($dir, 0744);
+                }
                 if (is_dir($dir)) {
                     $logPattern = LogPattern::DDMMYYYY_LOGS;
                     $logPatternCases = LogPattern::cases();
@@ -114,7 +117,7 @@ class LoggerFactory implements LoggerInterface
                     }
                     if ($logPattern == LogPattern::DDMMYYYY_LOGS) {
                         $today = date("Y-m-d", time());
-                        $file_name = $dir . "/" . $today . "_logs.log";
+                        $file_name = $dir . "/" . $today . ".log";
                         if (!file_exists($file_name)) {
                             $f = fopen($file_name, "w");
                         } else {
@@ -122,17 +125,17 @@ class LoggerFactory implements LoggerInterface
                         }
                         fwrite($f, $fullMessage . "\n");
                     }
-                } else {
-                    mkdir($dir, 744);
-                }
+                } 
             } catch (Exception $ex) {
-                $message = $ex->getMessage();
-                $stacktrace = $ex->getTraceAsString();
-                $response["message"] = $message;
-                $response["stacktrace"] = $stacktrace;
-                $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
-                $response["time"] = time();
-                echo Response::json(HttpStatus::INTERNAL_SERVER_ERROR, $response);
+                // $message = $ex->getMessage();
+                // $stacktrace = $ex->getTraceAsString();
+                // $response["message"] = $message;
+                // $response["stacktrace"] = $stacktrace;
+                // $response["statusCode"] = HttpStatus::INTERNAL_SERVER_ERROR->value;
+                // $response["time"] = time();
+                // Response::out(HttpStatus::INTERNAL_SERVER_ERROR, $response);
+                // die();
+                throw new Exception($ex->getMessage(), 500, $ex);
             }
         }
         

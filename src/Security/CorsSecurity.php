@@ -4,12 +4,13 @@
 namespace OrionApi\Core\Security;
 
 use OrionApi\Core\Enums\HttpStatus;
-use OrionApi\Core\Http\Response;
+use OrionApi\Core\Exception\UnauthorizedException;
 
 /**
  * This class provides CORS configuration
  * @author Shyam Dubey
- * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
  */
 class CorsSecurity
 {
@@ -28,11 +29,13 @@ class CorsSecurity
      * This function ensures that cors and disabled or enabled and which cors are allowed
      * You can modify the behaviour in @link App\\Setting.php file.
      * @author Shyam Dubey
-     * @since 2025
+     * @since v1.0.0
+     * @version v1.0.0
      */
-    public static function init()
+    public static function init($allowed_domain)
     {
 
+        self::$allowed_domains = $allowed_domain;
 
         // Allow from any origin
         header("Access-Control-Allow-Origin: *");
@@ -50,8 +53,7 @@ class CorsSecurity
         }
         $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "";
         if (!in_array("*", self::$allowed_domains) && !in_array($host, self::$allowed_domains)) {
-            echo Response::json(HttpStatus::FORBIDDEN, ["message" => "Invalid Domain. Add this domain in Settings under variable CORS_DOMAINS"]);
-            die();
+            throw new UnauthorizedException("Invalid Domain. Add this domain in Settings under variable CORS_DOMAINS");
         }
     }
 }
